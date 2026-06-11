@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -68,6 +70,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(nullable: true)]
     private ?float $weeklyBetLimit = null;
+
+    /**
+     * @var Collection<int, Bet>
+     */
+    #[ORM\OneToMany(targetEntity: Bet::class, mappedBy: 'user')]
+    private Collection $bets;
+
+    /**
+     * @var Collection<int, Transaction>
+     */
+    #[ORM\OneToMany(targetEntity: Transaction::class, mappedBy: 'user')]
+    private Collection $transactions;
+
+    public function __construct()
+    {
+        $this->bets = new ArrayCollection();
+        $this->transactions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -272,6 +292,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setWeeklyBetLimit(?float $weeklyBetLimit): static
     {
         $this->weeklyBetLimit = $weeklyBetLimit;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Bet>
+     */
+    public function getBets(): Collection
+    {
+        return $this->bets;
+    }
+
+    public function addBet(Bet $bet): static
+    {
+        if (!$this->bets->contains($bet)) {
+            $this->bets->add($bet);
+            $bet->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBet(Bet $bet): static
+    {
+        if ($this->bets->removeElement($bet)) {
+            // set the owning side to null (unless already changed)
+            if ($bet->getUser() === $this) {
+                $bet->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Transaction>
+     */
+    public function getTransactions(): Collection
+    {
+        return $this->transactions;
+    }
+
+    public function addTransaction(Transaction $transaction): static
+    {
+        if (!$this->transactions->contains($transaction)) {
+            $this->transactions->add($transaction);
+            $transaction->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransaction(Transaction $transaction): static
+    {
+        if ($this->transactions->removeElement($transaction)) {
+            // set the owning side to null (unless already changed)
+            if ($transaction->getUser() === $this) {
+                $transaction->setUser(null);
+            }
+        }
 
         return $this;
     }

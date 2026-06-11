@@ -36,9 +36,16 @@ class SportEvent
     #[ORM\OneToMany(targetEntity: Issue::class, mappedBy: 'sportEvent', orphanRemoval: true)]
     private Collection $issues;
 
+    /**
+     * @var Collection<int, Bet>
+     */
+    #[ORM\OneToMany(targetEntity: Bet::class, mappedBy: 'sportEvent')]
+    private Collection $bets;
+
     public function __construct()
     {
         $this->issues = new ArrayCollection();
+        $this->bets = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -130,6 +137,36 @@ class SportEvent
             // set the owning side to null (unless already changed)
             if ($issue->getSportEvent() === $this) {
                 $issue->setSportEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Bet>
+     */
+    public function getBets(): Collection
+    {
+        return $this->bets;
+    }
+
+    public function addBet(Bet $bet): static
+    {
+        if (!$this->bets->contains($bet)) {
+            $this->bets->add($bet);
+            $bet->setSportEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBet(Bet $bet): static
+    {
+        if ($this->bets->removeElement($bet)) {
+            // set the owning side to null (unless already changed)
+            if ($bet->getSportEvent() === $this) {
+                $bet->setSportEvent(null);
             }
         }
 
