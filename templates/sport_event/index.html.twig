@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Manage Events{% endblock %}
+
+{% block body %}
+    <h1>Events</h1>
+
+    <a href="{{ path('event_new') }}">Create new event</a>
+
+    {% for event in events %}
+        <div>
+            <h2>{{ event.name }}</h2>
+            <p>Sport: {{ event.sport }}</p>
+            <p>Participants: {{ event.participants }}</p>
+            <p>Date: {{ event.eventDate|date('d/m/Y H:i') }}</p>
+            <p>Status: {{ event.status }}</p>
+
+            {% if event.status == 'BROUILLON' %}
+                <a href="{{ path('event_publish', {id: event.id}) }}">Publish</a>
+
+                <form method="post" action="{{ path('event_delete', {id: event.id}) }}">
+                    <button type="submit">Delete</button>
+                </form>
+            {% endif %}
+        </div>
+        <hr>
+    {% else %}
+        <p>No events yet.</p>
+    {% endfor %}
+{% endblock %}

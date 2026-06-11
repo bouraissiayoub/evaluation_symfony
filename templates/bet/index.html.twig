@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Events{% endblock %}
+
+{% block body %}
+    <h1>Available Events</h1>
+
+    {% for event in events %}
+        <div>
+            <h2>{{ event.name }}</h2>
+            <p>Sport: {{ event.sport }}</p>
+            <p>Participants: {{ event.participants }}</p>
+            <p>Date: {{ event.eventDate|date('d/m/Y H:i') }}</p>
+
+            <h3>Choose an outcome:</h3>
+            {% for issue in event.issues %}
+                <form method="post" action="{{ path('bet_place') }}">
+                    <input type="hidden" name="issueId" value="{{ issue.id }}">
+                    <label>{{ issue.label }} (odds: {{ issue.currentOdds }})</label>
+                    <input type="number" name="amount" min="1" step="0.01" placeholder="Amount">
+                    <button type="submit">Place Bet</button>
+                </form>
+            {% endfor %}
+        </div>
+        <hr>
+    {% else %}
+        <p>No events available right now.</p>
+    {% endfor %}
+{% endblock %}
