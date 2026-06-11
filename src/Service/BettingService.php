@@ -17,6 +17,10 @@ class BettingService
 
     public function placeBet(User $user, Issue $issue, float $amount): string
     {
+        $limitError = $this->checkBetLimits($user, $amount);
+if ($limitError !== null) {
+    return $limitError;
+}
         $event = $issue->getSportEvent();
 
         // check event is open
@@ -94,5 +98,32 @@ class BettingService
 
     $event->setStatus('TERMINE');
     $this->em->flush();
+}
+private function checkBetLimits(User $user, float $amount): ?string
+{
+    $today = new \DateTime('today');
+    $weekStart = new \DateTime('monday this week');
+
+    $dailyTotal = 0;
+    $weeklyTotal = 0;
+
+    foreach ($user->getBets() as $bet) {
+        if ($bet->getPlacedAt() >= $today) {
+            $dailyTotal += $bet->getAmount();
+        }
+        if ($bet->getPlacedAt() >= $weekStart) {
+            $weeklyTotal += $bet->getAmount();
+        }
+    }
+
+    if ($user->getDailyBetLimit() !== null && ($dailyTotal + $amount) > $user->getDailyBetLimit()) {
+        return 'You have reached your daily bet limit.';
+    }
+
+    if ($user->getWeeklyBetLimit() !== null && ($weeklyTotal + $amount) > $user->getWeeklyBetLimit()) {
+        return 'You have reached your weekly bet limit.';
+    }
+
+    return null;
 }
 }
