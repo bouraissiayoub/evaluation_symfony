@@ -11,7 +11,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-
+use Symfony\Component\Validator\Constraints\LessThanOrEqual;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -22,10 +25,10 @@ class RegistrationFormType extends AbstractType
         ->add('birthDate', BirthdayType::class, [
             'widget' => 'single_text',
             'constraints' => [
-                new LessThanOrEqual([
-                    'value' => '-18 years',
-                    'message' => 'You must be 18 or older to register.',
-                ]),
+                new LessThanOrEqual(
+    value: new \DateTime('-18 years'),
+    message: 'You must be 18 or older to register.'
+),
             ],
         ])
             ->add('email', EmailType::class)
@@ -39,7 +42,7 @@ class RegistrationFormType extends AbstractType
             ])
         ->add('plainPassword', PasswordType::class, [
             'mapped' => false,
-            'constraints' => [new NotBlank(), new Length(['min' => 6])],
+            'constraints' => [new NotBlank(), new Length(min: 6)],
         ]);
         
     }
