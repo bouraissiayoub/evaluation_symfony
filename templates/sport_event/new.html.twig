@@ -20,6 +20,21 @@
             <label class="form-label">Date</label>
             <input type="datetime-local" name="eventDate" class="form-control" required>
         </div>
+
+        <h5 class="mt-4">Outcomes</h5>
+        <div class="mb-3">
+            <label class="form-label">Outcome 1</label>
+            <input type="text" name="issues[]" class="form-control" placeholder="e.g. Team A wins" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Outcome 2</label>
+            <input type="text" name="issues[]" class="form-control" placeholder="e.g. Draw" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Outcome 3</label>
+            <input type="text" name="issues[]" class="form-control" placeholder="e.g. Team B wins" required>
+        </div>
+
         <button type="submit" class="btn btn-primary">Create</button>
         <a href="{{ path('event_index') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
     </form>

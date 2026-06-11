@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\IssueRepository;
 use App\Service\BettingService;
-
+use App\Entity\Issue;
 
 #[Route('/manager/event')]
 class SportEventController extends AbstractController
@@ -30,24 +30,35 @@ public function index(SportEventRepository $repo, Request $request): Response
 }
 
     #[Route('/new', name: 'event_new')]
-    public function new(Request $request, EntityManagerInterface $em): Response
-    {
-        if ($request->isMethod('POST')) {
-            $event = new SportEvent();
-            $event->setName($request->request->get('name'));
-            $event->setSport($request->request->get('sport'));
-            $event->setParticipants($request->request->get('participants'));
-            $event->setEventDate(new \DateTime($request->request->get('eventDate')));
-            $event->setStatus('BROUILLON');
+public function new(Request $request, EntityManagerInterface $em): Response
+{
+    if ($request->isMethod('POST')) {
+        $event = new SportEvent();
+        $event->setName($request->request->get('name'));
+        $event->setSport($request->request->get('sport'));
+        $event->setParticipants($request->request->get('participants'));
+        $event->setEventDate(new \DateTime($request->request->get('eventDate')));
+        $event->setStatus('BROUILLON');
 
-            $em->persist($event);
-            $em->flush();
+        $em->persist($event);
 
-            return $this->redirectToRoute('event_index');
+        foreach ($request->request->all('issues') as $label) {
+            if ($label !== '') {
+                $issue = new Issue();
+                $issue->setLabel($label);
+                $issue->setCurrentOdds(1.50);
+                $issue->setTotalAmountBet(0.0);
+                $issue->setSportEvent($event);
+                $em->persist($issue);
+            }
         }
 
-        return $this->render('sport_event/new.html.twig');
+        $em->flush();
+        return $this->redirectToRoute('event_index');
     }
+
+    return $this->render('sport_event/new.html.twig');
+}
 
     #[Route('/{id}/publish', name: 'event_publish')]
     public function publish(SportEvent $event, EntityManagerInterface $em): Response
