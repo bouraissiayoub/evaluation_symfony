@@ -15,13 +15,26 @@
             <p>Date: {{ event.eventDate|date('d/m/Y H:i') }}</p>
             <p>Status: {{ event.status }}</p>
 
-            {% if event.status == 'BROUILLON' %}
-                <a href="{{ path('event_publish', {id: event.id}) }}">Publish</a>
+         
+      {% if event.status == 'BROUILLON' %}
+    <a href="{{ path('event_publish', {id: event.id}) }}">Publish</a>
+    <form method="post" action="{{ path('event_delete', {id: event.id}) }}">
+        <button type="submit">Delete</button>
+    </form>
+{% endif %}
 
-                <form method="post" action="{{ path('event_delete', {id: event.id}) }}">
-                    <button type="submit">Delete</button>
-                </form>
-            {% endif %}
+{% if event.status == 'PUBLIE' %}
+    <a href="{{ path('event_close', {id: event.id}) }}">Close</a>
+{% endif %}
+
+{% if event.status == 'FERME' %}
+    <p>Select winning outcome:</p>
+    {% for issue in event.issues %}
+        <a href="{{ path('event_resolve', {id: event.id, issueId: issue.id}) }}">
+            {{ issue.label }} wins
+        </a>
+    {% endfor %}
+{% endif %}
         </div>
         <hr>
     {% else %}

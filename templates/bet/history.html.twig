@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Bets{% endblock %}
+
+{% block body %}
+    <h1>My Bet History</h1>
+
+    {% for bet in bets %}
+        <div>
+            <p>Event: {{ bet.sportEvent.name }}</p>
+            <p>Outcome: {{ bet.issue.label }}</p>
+            <p>Amount: {{ bet.amount }} €</p>
+            <p>Odds: {{ bet.recordedOdds }}</p>
+            <p>Status: {{ bet.status }}</p>
+            <p>Date: {{ bet.placedAt|date('d/m/Y H:i') }}</p>
+        </div>
+        <hr>
+    {% else %}
+        <p>No bets yet.</p>
+    {% endfor %}
+{% endblock %}

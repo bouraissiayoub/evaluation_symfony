@@ -15,6 +15,13 @@
                 <a href="{{ path('app_login') }}">Login</a>
                 <a href="{{ path('app_register') }}">Register</a>
             {% endif %}
+            <a href="{{ path('bet_history') }}">My Bets</a>
+            {% if is_granted('ROLE_MANAGER') %}
+                <a href="{{ path('event_index') }}">Manage Events</a>
+            {% endif %}
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('admin_index') }}">Admin Panel</a>
+            {% endif %}
         </nav>
 
         {% for message in app.flashes('error') %}

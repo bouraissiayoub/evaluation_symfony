@@ -9,6 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Repository\IssueRepository;
+use App\Service\BettingService;
+
 
 #[Route('/manager/event')]
 class SportEventController extends AbstractController
@@ -54,6 +57,27 @@ class SportEventController extends AbstractController
     {
         $em->remove($event);
         $em->flush();
+        return $this->redirectToRoute('event_index');
+    }
+
+       #[Route('/{id}/close', name: 'event_close')]
+    public function close(SportEvent $event, EntityManagerInterface $em): Response
+    {
+        $event->setStatus('FERME');
+        $em->flush();
+        return $this->redirectToRoute('event_index');
+    }
+
+    #[Route('/{id}/resolve/{issueId}', name: 'event_resolve')]
+    public function resolve(int $id, int $issueId, SportEventRepository $repo, IssueRepository $issueRepo, BettingService $bettingService): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_MANAGER');
+
+        $event = $repo->find($id);
+        $winningIssue = $issueRepo->find($issueId);
+
+        $bettingService->resolveEvent($event, $winningIssue);
+
         return $this->redirectToRoute('event_index');
     }
 }

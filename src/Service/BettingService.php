@@ -7,7 +7,7 @@ use App\Entity\Issue;
 use App\Entity\Transaction;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-
+use App\Entity\SportEvent;
 class BettingService
 {
     public function __construct(
@@ -67,4 +67,32 @@ class BettingService
 
         return 'success';
     }
+    public function resolveEvent(SportEvent $event, Issue $winningIssue): void
+{
+    foreach ($event->getBets() as $bet) {
+        if ($bet->getStatus() !== 'EN_ATTENTE') {
+            continue;
+        }
+
+        if ($bet->getIssue()->getId() === $winningIssue->getId()) {
+            // winner
+            $bet->setStatus('GAGNE');
+            $gain = $bet->getAmount() * $bet->getRecordedOdds();
+            $bet->getUser()->setBalance($bet->getUser()->getBalance() + $gain);
+
+            $transaction = new Transaction();
+            $transaction->setAmount($gain);
+            $transaction->setType('GAIN');
+            $transaction->setCreatedAt(new \DateTime());
+            $transaction->setUser($bet->getUser());
+            $this->em->persist($transaction);
+        } else {
+            // loser
+            $bet->setStatus('PERDU');
+        }
+    }
+
+    $event->setStatus('TERMINE');
+    $this->em->flush();
+}
 }

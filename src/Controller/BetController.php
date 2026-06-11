@@ -35,4 +35,18 @@ class BetController extends AbstractController
 
         return $this->redirectToRoute('bet_index');
     }
+    #[Route('/', name: 'app_home')]
+public function home(): Response
+{
+    return $this->redirectToRoute('bet_index');
+}
+#[Route('/history', name: 'bet_history')]
+public function history(): Response
+{
+    $this->denyAccessUnlessGranted('ROLE_USER');
+    
+    return $this->render('bet/history.html.twig', [
+        'bets' => $this->getUser()->getBets(),
+    ]);
+}
 }

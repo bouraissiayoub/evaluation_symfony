@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Panel{% endblock %}
+
+{% block body %}
+    <h1>Admin Panel</h1>
+
+    <table>
+        <tr>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Roles</th>
+            <th>Active</th>
+            <th>Actions</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.email }}</td>
+            <td>{{ user.firstName }} {{ user.lastName }}</td>
+            <td>{{ user.roles|join(', ') }}</td>
+            <td>{{ user.isActive ? 'Yes' : 'No' }}</td>
+            <td>
+                <a href="{{ path('admin_make_manager', {id: user.id}) }}">Make Manager</a>
+                {% if user.isActive %}
+                    <a href="{{ path('admin_suspend', {id: user.id}) }}">Suspend</a>
+                {% else %}
+                    <a href="{{ path('admin_activate', {id: user.id}) }}">Activate</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
