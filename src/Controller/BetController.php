@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\SportEventRepository;
 use App\Repository\IssueRepository;
 use App\Service\BettingService;
@@ -48,5 +49,18 @@ public function history(): Response
     return $this->render('bet/history.html.twig', [
         'bets' => $this->getUser()->getBets(),
     ]);
+}
+#[Route('/self-exclude', name: 'self_exclude', methods: ['POST'])]
+public function selfExclude(Request $request, EntityManagerInterface $em): Response
+{
+    $this->denyAccessUnlessGranted('ROLE_USER');
+
+    $until = new \DateTime($request->request->get('until'));
+    $this->getUser()->setSelfExclusionEnd($until);
+    $em->flush();
+
+$this->addFlash('success', sprintf('You have been self-excluded until %s', $until->format('d/m/Y')));
+
+    return $this->redirectToRoute('bet_index');
 }
 }

@@ -55,8 +55,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $isActive = true;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeInterface $selfExclusionEnd = null;
+ #[ORM\Column(type: 'datetime', nullable: true)]
+private ?\DateTimeInterface $selfExclusionEnd = null;
 
 
     #[ORM\Column(nullable: true)]
