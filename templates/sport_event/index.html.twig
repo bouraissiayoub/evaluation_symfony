@@ -1,43 +1,43 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Manage Events{% endblock %}
-
 {% block body %}
-    <h1>Events</h1>
+<div class="d-flex justify-content-between mb-4">
+    <h3>Manage Events</h3>
+    <a href="{{ path('event_new') }}" class="btn btn-primary">+ New Event</a>
+</div>
 
-    <a href="{{ path('event_new') }}">Create new event</a>
-
-    {% for event in events %}
-        <div>
-            <h2>{{ event.name }}</h2>
-            <p>Sport: {{ event.sport }}</p>
-            <p>Participants: {{ event.participants }}</p>
-            <p>Date: {{ event.eventDate|date('d/m/Y H:i') }}</p>
-            <p>Status: {{ event.status }}</p>
-
-         
-      {% if event.status == 'BROUILLON' %}
-    <a href="{{ path('event_publish', {id: event.id}) }}">Publish</a>
-    <form method="post" action="{{ path('event_delete', {id: event.id}) }}">
-        <button type="submit">Delete</button>
-    </form>
-{% endif %}
-
-{% if event.status == 'PUBLIE' %}
-    <a href="{{ path('event_close', {id: event.id}) }}">Close</a>
-{% endif %}
-
-{% if event.status == 'FERME' %}
-    <p>Select winning outcome:</p>
-    {% for issue in event.issues %}
-        <a href="{{ path('event_resolve', {id: event.id, issueId: issue.id}) }}">
-            {{ issue.label }} wins
-        </a>
-    {% endfor %}
-{% endif %}
+{% for event in events %}
+    <div class="card mb-3">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <strong>{{ event.name }}</strong>
+                <p class="mb-0 text-muted">{{ event.sport }} — {{ event.participants }}</p>
+                <small class="text-muted">{{ event.eventDate|date('d/m/Y H:i') }}</small>
+            </div>
+            <div class="text-end">
+                {% if event.status == 'BROUILLON' %}
+                    <span class="badge bg-secondary d-block mb-2">BROUILLON</span>
+                    <a href="{{ path('event_publish', {id: event.id}) }}" class="btn btn-success btn-sm">Publish</a>
+                    <form method="post" action="{{ path('event_delete', {id: event.id}) }}" class="d-inline">
+                        <button class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                {% elseif event.status == 'PUBLIE' %}
+                    <span class="badge bg-success d-block mb-2">PUBLIE</span>
+                    <a href="{{ path('event_close', {id: event.id}) }}" class="btn btn-warning btn-sm">Close</a>
+                {% elseif event.status == 'FERME' %}
+                    <span class="badge bg-warning text-dark d-block mb-2">FERME</span>
+                    {% for issue in event.issues %}
+                        <a href="{{ path('event_resolve', {id: event.id, issueId: issue.id}) }}" class="btn btn-outline-primary btn-sm mb-1 d-block">
+                            {{ issue.label }} wins
+                        </a>
+                    {% endfor %}
+                {% elseif event.status == 'TERMINE' %}
+                    <span class="badge bg-primary">TERMINE</span>
+                {% endif %}
+            </div>
         </div>
-        <hr>
-    {% else %}
-        <p>No events yet.</p>
-    {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">No events yet.</div>
+{% endfor %}
 {% endblock %}

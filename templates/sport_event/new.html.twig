@@ -1,23 +1,27 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}New Event{% endblock %}
-
 {% block body %}
-    <h1>Create new event</h1>
-
+<div style="max-width:500px">
+    <h3 class="mb-4">Create new event</h3>
     <form method="post">
-        <label>Name</label>
-        <input type="text" name="name" required>
-
-        <label>Sport</label>
-        <input type="text" name="sport" required>
-
-        <label>Participants</label>
-        <input type="text" name="participants" required>
-
-        <label>Date</label>
-        <input type="datetime-local" name="eventDate" required>
-
-        <button type="submit">Create</button>
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" name="name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Sport</label>
+            <input type="text" name="sport" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Participants</label>
+            <input type="text" name="participants" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input type="datetime-local" name="eventDate" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+        <a href="{{ path('event_index') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
     </form>
+</div>
 {% endblock %}

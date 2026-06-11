@@ -1,33 +1,41 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Admin Panel{% endblock %}
-
 {% block body %}
-    <h1>Admin Panel</h1>
+<h3 class="mb-4">Admin Panel</h3>
 
-    <table>
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
         <tr>
             <th>Email</th>
             <th>Name</th>
             <th>Roles</th>
-            <th>Active</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
+    </thead>
+    <tbody>
         {% for user in users %}
         <tr>
             <td>{{ user.email }}</td>
             <td>{{ user.firstName }} {{ user.lastName }}</td>
             <td>{{ user.roles|join(', ') }}</td>
-            <td>{{ user.isActive ? 'Yes' : 'No' }}</td>
             <td>
-                <a href="{{ path('admin_make_manager', {id: user.id}) }}">Make Manager</a>
                 {% if user.isActive %}
-                    <a href="{{ path('admin_suspend', {id: user.id}) }}">Suspend</a>
+                    <span class="badge bg-success">Active</span>
                 {% else %}
-                    <a href="{{ path('admin_activate', {id: user.id}) }}">Activate</a>
+                    <span class="badge bg-danger">Suspended</span>
+                {% endif %}
+            </td>
+            <td class="d-flex gap-2">
+                <a href="{{ path('admin_make_manager', {id: user.id}) }}" class="btn btn-sm btn-outline-primary">Make Manager</a>
+                {% if user.isActive %}
+                    <a href="{{ path('admin_suspend', {id: user.id}) }}" class="btn btn-sm btn-danger">Suspend</a>
+                {% else %}
+                    <a href="{{ path('admin_activate', {id: user.id}) }}" class="btn btn-sm btn-success">Activate</a>
                 {% endif %}
             </td>
         </tr>
         {% endfor %}
-    </table>
+    </tbody>
+</table>
 {% endblock %}

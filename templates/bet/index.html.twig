@@ -1,29 +1,35 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Events{% endblock %}
-
 {% block body %}
-    <h1>Available Events</h1>
+<h3 class="mb-4">Available Events</h3>
 
-    {% for event in events %}
-        <div>
-            <h2>{{ event.name }}</h2>
-            <p>Sport: {{ event.sport }}</p>
+{% for event in events %}
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between">
+            <strong>{{ event.name }}</strong>
+            <span class="badge bg-success">{{ event.sport }}</span>
+        </div>
+        <div class="card-body">
             <p>Participants: {{ event.participants }}</p>
             <p>Date: {{ event.eventDate|date('d/m/Y H:i') }}</p>
-
-            <h3>Choose an outcome:</h3>
-            {% for issue in event.issues %}
-                <form method="post" action="{{ path('bet_place') }}">
-                    <input type="hidden" name="issueId" value="{{ issue.id }}">
-                    <label>{{ issue.label }} (odds: {{ issue.currentOdds }})</label>
-                    <input type="number" name="amount" min="1" step="0.01" placeholder="Amount">
-                    <button type="submit">Place Bet</button>
-                </form>
-            {% endfor %}
+            <div class="row">
+                {% for issue in event.issues %}
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 mb-2">
+                            <p class="fw-bold">{{ issue.label }}</p>
+                            <p class="text-warning">Odds: {{ issue.currentOdds }}</p>
+                            <form method="post" action="{{ path('bet_place') }}">
+                                <input type="hidden" name="issueId" value="{{ issue.id }}">
+                                <input type="number" name="amount" min="1" step="0.01" placeholder="Amount €" class="form-control mb-2">
+                                <button type="submit" class="btn btn-warning w-100">Bet</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-        <hr>
-    {% else %}
-        <p>No events available right now.</p>
-    {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">No events available.</div>
+{% endfor %}
 {% endblock %}
