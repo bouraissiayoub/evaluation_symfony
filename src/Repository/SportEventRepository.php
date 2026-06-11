@@ -16,6 +16,15 @@ class SportEventRepository extends ServiceEntityRepository
         parent::__construct($registry, SportEvent::class);
     }
 
+public function findPaginated(int $page, int $limit = 5): array
+{
+    return $this->createQueryBuilder('e')
+        ->setFirstResult(($page - 1) * $limit)
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+}
+
 //    /**
 //     * @return SportEvent[] Returns an array of SportEvent objects
 //     */

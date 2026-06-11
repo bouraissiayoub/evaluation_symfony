@@ -38,4 +38,10 @@
         {% endfor %}
     </tbody>
 </table>
+<div class="d-flex gap-2 mt-4">
+    {% if page > 1 %}
+        <a href="?page={{ page - 1 }}" class="btn btn-outline-secondary">Previous</a>
+    {% endif %}
+    <a href="?page={{ page + 1 }}" class="btn btn-outline-secondary">Next</a>
+</div>
 {% endblock %}

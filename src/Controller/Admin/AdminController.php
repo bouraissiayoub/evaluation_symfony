@@ -11,15 +11,19 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/admin')]
 class AdminController extends AbstractController
 {
-    #[Route('/', name: 'admin_index')]
-    public function index(UserRepository $repo): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+#[Route('/', name: 'admin_index')]
+public function index(UserRepository $repo, Request $request): Response
+{
+    $this->denyAccessUnlessGranted('ROLE_ADMIN');
+    $page = $request->query->getInt('page', 1);
+    $users = $repo->findPaginated($page);
 
-        return $this->render('admin/index.html.twig', [
-            'users' => $repo->findAll(),
-        ]);
-    }
+    return $this->render('admin/index.html.twig', [
+        'users' => $users,
+        'page' => $page,
+    ]);
+}
+    
 
     #[Route('/user/{id}/make-manager', name: 'admin_make_manager')]
     public function makeManager(int $id, UserRepository $repo, EntityManagerInterface $em): Response

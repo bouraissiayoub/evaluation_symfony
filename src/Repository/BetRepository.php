@@ -15,6 +15,17 @@ class BetRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Bet::class);
     }
+    #[Route('/', name: 'bet_index')]
+public function index(SportEventRepository $repo, Request $request): Response
+{
+    $page = $request->query->getInt('page', 1);
+    $events = $repo->findPaginated($page);
+
+    return $this->render('bet/index.html.twig', [
+        'events' => $events,
+        'page' => $page,
+    ]);
+}
 
 //    /**
 //     * @return Bet[] Returns an array of Bet objects

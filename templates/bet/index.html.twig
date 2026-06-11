@@ -3,6 +3,10 @@
 {% block body %}
 <h3 class="mb-4">Available Events</h3>
 
+<div class="alert alert-warning">
+    <strong>Responsible gaming:</strong> Betting can be addictive. Play responsibly. Must be 18+. 
+    You can self-exclude at any time using the form below.
+</div>
 <div class="card mb-4" style="max-width:400px">
     <div class="card-body">
         <h6>Self-exclusion</h6>
@@ -42,4 +46,10 @@
 {% else %}
     <div class="alert alert-info">No events available.</div>
 {% endfor %}
+<div class="d-flex gap-2 mt-4">
+    {% if page > 1 %}
+        <a href="?page={{ page - 1 }}" class="btn btn-outline-secondary">Previous</a>
+    {% endif %}
+    <a href="?page={{ page + 1 }}" class="btn btn-outline-secondary">Next</a>
+</div>
 {% endblock %}

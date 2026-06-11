@@ -17,12 +17,17 @@ use App\Service\BettingService;
 class SportEventController extends AbstractController
 {
     #[Route('/', name: 'event_index')]
-    public function index(SportEventRepository $repo): Response
-    {
-        return $this->render('sport_event/index.html.twig', [
-            'events' => $repo->findAll(),
-        ]);
-    }
+  #[Route('/', name: 'event_index')]
+public function index(SportEventRepository $repo, Request $request): Response
+{
+    $page = $request->query->getInt('page', 1);
+    $events = $repo->findPaginated($page);
+
+    return $this->render('sport_event/index.html.twig', [
+        'events' => $events,
+        'page' => $page,
+    ]);
+}
 
     #[Route('/new', name: 'event_new')]
     public function new(Request $request, EntityManagerInterface $em): Response
@@ -80,4 +85,5 @@ class SportEventController extends AbstractController
 
         return $this->redirectToRoute('event_index');
     }
+    
 }

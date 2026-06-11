@@ -15,12 +15,17 @@ use Symfony\Component\Routing\Attribute\Route;
 class BetController extends AbstractController
 {
     #[Route('/', name: 'bet_index')]
-    public function index(SportEventRepository $repo): Response
-    {
-        return $this->render('bet/index.html.twig', [
-            'events' => $repo->findBy(['status' => 'PUBLIE']),
-        ]);
-    }
+ #[Route('/', name: 'bet_index')]
+public function index(SportEventRepository $repo, Request $request): Response
+{
+    $page = $request->query->getInt('page', 1);
+    $events = $repo->findPaginated($page);
+
+    return $this->render('bet/index.html.twig', [
+        'events' => $events,
+        'page' => $page,
+    ]);
+}
 
     #[Route('/place', name: 'bet_place', methods: ['POST'])]
     public function place(Request $request, IssueRepository $issueRepo, BettingService $bettingService): Response
